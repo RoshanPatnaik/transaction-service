@@ -80,9 +80,9 @@ public class TransactionService {
 				else {
 					//beneficiary does not exist
 				}
-	
+
 			}
-			
+
 		}
 	}
 
@@ -91,6 +91,13 @@ public class TransactionService {
 			return true;
 		}
 		return false;
+	}
+	public List<Transaction> getAllTransactions(String accountNumber){
+		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber().equals(accountNumber)).collect(Collectors.toList());
+	}
+	public List<Transaction> getLastFiveTransactions(String accountNumber){
+		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber().equals(accountNumber)).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed()).limit(5).collect(Collectors.toList());
+
 	}
 
 }
