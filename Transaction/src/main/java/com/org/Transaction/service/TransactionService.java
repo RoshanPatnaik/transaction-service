@@ -2,15 +2,20 @@ package com.org.Transaction.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.org.Transaction.dao.TransactionDaoImpl;
 import com.org.Transaction.model.Account;
+import com.org.Transaction.model.AccountList;
 import com.org.Transaction.model.Beneficiary;
 import com.org.Transaction.model.CreditCard;
 import com.org.Transaction.model.Transaction;
@@ -55,34 +60,48 @@ public class TransactionService {
 		// account=rest.getForObject("http://ACCOUNTS-SERVICE/.....",Account.class);
 
 		List<Account> accounts = new ArrayList();
+		AccountList list = restTemplate.getForObject("http://DUMMY-CLIENT/getList", AccountList.class);
+		accounts = list.getAccounts();
+		Transaction transaction=null;
+		int flag=0;
 		for (Account account : accounts) {
 			if (account.getAccountNo() == accountNo) {
+				flag=1;
 				if(beneficiaryExists(beneficiaryAccountNumber)) {
-					if(account.getAccountBal() < amount) {
-						if(transactionType.equals("credit")) {
-							//CreditCard card = rest.getForObject("http://ACCOUNTS-SERVICE/.....",Credit.class);
-							CreditCard card = new CreditCard();
-							if(amount <= card.getAvailableBalance()) {
-								card.setAvailableBalance(card.getAvailableBalance()-amount);
-								Transaction transaction = new Transaction(userId, amount, LocalDate.now(), transactionType,beneficiaryAccountNumber, accountNo);
-								dao.saveTransaction(transaction);
-							}
+					if(transactionType.equals("credit")) {
+						CreditCard card = restTemplate.getForObject("http://DUMMY-CLIENT/getCreditCard", CreditCard.class);
+						if(amount <= card.getAvailableBalance()) {
+							card.setAvailableBalance(card.getAvailableBalance()-amount);
+							transaction = new Transaction(userId, amount, LocalDate.now(), transactionType,beneficiaryAccountNumber, accountNo);
+							restTemplate.postForObject("http://DUMMY-CLIENT/creditCardDetailsAfterTransaction", card, CreditCard.class);
+							dao.saveTransaction(transaction);
 						}
 						else {
-							//insufficient balance
+							//credit limit exceeded
+							System.out.println("Credit Limit Exceeded");
+							break;
 						}
 					}
-					else {
-						Transaction transaction = new Transaction(userId, amount, LocalDate.now(), transactionType,beneficiaryAccountNumber, accountNo);
+						
+					else if(account.getAccountBal()>=amount){
+						account.setAccountBal(account.getAccountBal()-amount);
+						transaction = new Transaction(userId, amount, LocalDate.now(), transactionType,beneficiaryAccountNumber, accountNo);
 						dao.saveTransaction(transaction);
 					}
 				}
 				else {
-					//beneficiary does not exist
+					System.out.println("Beneficiary Does not exist");
+					break;
 				}
 
 			}
 
+		}
+		if(flag==0) {
+			System.out.println("Account number Does Not exist");
+		}
+		else {
+			System.out.println(transaction);
 		}
 	}
 
@@ -92,12 +111,23 @@ public class TransactionService {
 		}
 		return false;
 	}
-	public List<Transaction> getAllTransactionsUsingAccountNumber(long accountNumber){
-		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber().equals(accountNumber)).collect(Collectors.toList());
-	}
-	public List<Transaction> getLastFiveTransactions(long accountNumber){
-		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber().equals(accountNumber)).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed()).limit(5).collect(Collectors.toList());
 
+	public List<Transaction> getAllTransactionsUsingAccountNumber(long accountNumber) {
+		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber() == accountNumber)
+				.collect(Collectors.toList());
+	}
+
+	public List<Transaction> getLastFiveTransactions(long accountNumber) {
+		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber() == accountNumber)
+				.sorted(Comparator.comparing(Transaction::getTransactionDate).reversed()).limit(5)
+				.collect(Collectors.toList());
+
+	}
+
+	public void getCreditCard() {
+		AccountList list = restTemplate.getForObject("http://DUMMY-CLIENT/getList", AccountList.class);
+		System.out.println(list.getAccounts());
+		CreditCard card = restTemplate.getForObject("http://DUMMY-CLIENT/getCreditCard", CreditCard.class);
 	}
 
 }

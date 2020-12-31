@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.org.Transaction.model.CreditCard;
 import com.org.Transaction.model.Transaction;
 import com.org.Transaction.service.TransactionService;
 
@@ -27,9 +28,11 @@ public class TransactionController {
 	@Autowired
 	private TransactionService service;
 
-	@GetMapping(value = "add/{acccountNo}/{beneficiaryAccountNumber}/{amount}/{transactionType}")
-	public void addTransaction(@PathVariable String userId, @PathVariable long accountNo,@PathVariable long beneficiaryAccountNumber, @PathVariable double amount,@PathVariable String transactionType) {
-			service.addTransaction(userId,accountNo,beneficiaryAccountNumber,amount,transactionType);
+	@GetMapping(value = "add/{userId}/{accountNo}/{beneficiaryAccountNumber}/{amount}/{transactionType}")
+	public void addTransaction(@PathVariable("userId") String userId, @PathVariable("accountNo") long accountNo,@PathVariable("beneficiaryAccountNumber") long beneficiaryAccountNumber, @PathVariable("amount") double amount,@PathVariable("transactionType") String transactionType) {
+		System.out.println("Inside controller");	
+		service.addTransaction(userId,accountNo,beneficiaryAccountNumber,amount,transactionType);
+		
 	}
 
 	@RequestMapping(value = "/filters", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
@@ -38,15 +41,20 @@ public class TransactionController {
 		return list;
 	}
 	@GetMapping(value= "/getall/{account}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-	public List<Transaction> getList(@PathVariable("account") long account){
-		System.out.println(service.getAllTransactionsUsingAccountNumber(account));
-		return service.getAllTransactions(account);
+	public List<Transaction> getList(@PathVariable("account") long accountNo){
+		return service.getAllTransactionsUsingAccountNumber(accountNo);
 	}
 	@GetMapping(value="/getfive/{account}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
 	public List<Transaction> getLastFive(@PathVariable("account") long account) {
-		System.out.println(service.getLastFiveTransactions(account));
 		return service.getLastFiveTransactions(account);
 	}
+	
+//	@GetMapping(value = "/showCreditCard")
+//	public CreditCard getCreditCard() {
+//		return service.getCreditCard();
+//	}
+	
+	
 
 
 }

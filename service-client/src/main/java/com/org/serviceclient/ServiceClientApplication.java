@@ -1,4 +1,4 @@
-package com.org.Transaction;
+package com.org.serviceclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,10 +10,10 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableEurekaClient
-public class TransactionApplication {
+public class ServiceClientApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TransactionApplication.class, args);
+		SpringApplication.run(ServiceClientApplication.class, args);
 	}
 	
 	@Bean
