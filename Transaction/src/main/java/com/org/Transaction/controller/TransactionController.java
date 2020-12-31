@@ -38,12 +38,12 @@ public class TransactionController {
 		return list;
 	}
 	@GetMapping(value= "/getall/{account}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-	public List<Transaction> getList(@PathVariable("account") String account){
-		System.out.println(service.getAllTransactions(account));
+	public List<Transaction> getList(@PathVariable("account") long account){
+		System.out.println(service.getAllTransactionsUsingAccountNumber(account));
 		return service.getAllTransactions(account);
 	}
 	@GetMapping(value="/getfive/{account}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-	public List<Transaction> getLastFive(@PathVariable("account") String account) {
+	public List<Transaction> getLastFive(@PathVariable("account") long account) {
 		System.out.println(service.getLastFiveTransactions(account));
 		return service.getLastFiveTransactions(account);
 	}

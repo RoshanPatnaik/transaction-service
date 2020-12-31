@@ -92,10 +92,10 @@ public class TransactionService {
 		}
 		return false;
 	}
-	public List<Transaction> getAllTransactions(String accountNumber){
+	public List<Transaction> getAllTransactionsUsingAccountNumber(long accountNumber){
 		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber().equals(accountNumber)).collect(Collectors.toList());
 	}
-	public List<Transaction> getLastFiveTransactions(String accountNumber){
+	public List<Transaction> getLastFiveTransactions(long accountNumber){
 		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber().equals(accountNumber)).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed()).limit(5).collect(Collectors.toList());
 
 	}
