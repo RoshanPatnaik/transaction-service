@@ -116,6 +116,11 @@ public class TransactionService {
 		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber() == accountNumber)
 				.collect(Collectors.toList());
 	}
+	
+	
+	public List<Transaction> getLastFive(String userId){
+		return dao.getAllTransactions().stream().filter(transaction -> transaction.getUserId().equals(userId)).collect(Collectors.toList());
+	}
 
 	public List<Transaction> getLastFiveTransactions(long accountNumber) {
 		return dao.getAllTransactions().stream().filter(t -> t.getAccountNumber() == accountNumber)

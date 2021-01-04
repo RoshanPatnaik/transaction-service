@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +48,11 @@ public class TransactionController {
 	@GetMapping(value="/getfive/{account}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
 	public List<Transaction> getLastFive(@PathVariable("account") long account) {
 		return service.getLastFiveTransactions(account);
+	}
+	
+	@GetMapping(value = "/lastfive/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Transaction> lastFive(@PathVariable String userId){
+		return service.getLastFive(userId);
 	}
 	
 //	@GetMapping(value = "/showCreditCard")
