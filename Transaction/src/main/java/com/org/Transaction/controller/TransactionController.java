@@ -26,15 +26,16 @@ import com.org.Transaction.exception.InsufficientBalanceException;
 import com.org.Transaction.model.CreditCard;
 import com.org.Transaction.model.Transaction;
 import com.org.Transaction.service.TransactionService;
+import com.org.Transaction.service.TransactionServiceImpl;
 
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("{userId}/transaction")
 public class TransactionController {
 
 	@Autowired
 	private TransactionService service;
 
-	@GetMapping(value = "add/{userId}/{accountNo}/{beneficiaryAccountNumber}/{amount}/{transactionType}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "add/{accountNo}/{beneficiaryAccountNumber}/{amount}/{transactionType}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> addTransaction(@PathVariable("userId") String userId, @PathVariable("accountNo") long accountNo,@PathVariable("beneficiaryAccountNumber") long beneficiaryAccountNumber, @PathVariable("amount") double amount,@PathVariable("transactionType") String transactionType) {	
 		ResponseEntity<Object> response = null;
 		try {
@@ -47,21 +48,21 @@ public class TransactionController {
 	}
 
 	@RequestMapping(value = "/filters", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-	public List<Transaction> getTransactionsWithFilters(@RequestParam("date") @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date, @RequestParam("type") @Nullable String type,@RequestParam("startDate") @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate, @RequestParam("endDate") @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
-		List<Transaction> list = service.getTransactionsWithFilters(date, type, startDate, endDate);
+	public List<Transaction> getTransactionsWithFilters(@RequestParam("userId") String userId, @RequestParam("date") @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date, @RequestParam("type") @Nullable String type,@RequestParam("startDate") @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate, @RequestParam("endDate") @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
+		List<Transaction> list = service.getTransactionsWithFilters(userId, date, type, startDate, endDate);
 		return list;
 	}
-	@GetMapping(value= "/getall/{account}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-	public List<Transaction> getList(@PathVariable("account") long accountNo){
+	@GetMapping(value= "/getall/{accountNo}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+	public List<Transaction> getList(@PathVariable("accountNo") long accountNo){
 		return service.getAllTransactionsUsingAccountNumber(accountNo);
 	}
-	@GetMapping(value="/getfive/{account}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-	public List<Transaction> getLastFive(@PathVariable("account") long account) {
-		return service.getLastFiveTransactions(account);
+	@GetMapping(value="/getfive/{accountNo}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+	public List<Transaction> getLastFive(@PathVariable("accountNo") long accountNo) {
+		return service.getLastFiveTransactions(accountNo);
 	}
 	
-	@GetMapping(value = "/lastfive/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Transaction> lastFive(@PathVariable String userId){
+	@GetMapping(value = "/lastfive", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Transaction> lastFive(@PathVariable("userId") String userId){
 		return service.getLastFive(userId);
 	}
 	

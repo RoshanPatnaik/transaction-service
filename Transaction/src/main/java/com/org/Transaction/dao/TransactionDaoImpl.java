@@ -14,7 +14,7 @@ import com.org.Transaction.repository.BeneficiaryRepository;
 import com.org.Transaction.repository.TransactionRepository;
 
 @Component
-public class TransactionDaoImpl {
+public class TransactionDaoImpl implements TransactionDao{
 
 	@Autowired
 	private TransactionRepository repo;
@@ -27,7 +27,6 @@ public class TransactionDaoImpl {
 	}
 	
 	public void saveTransactions(List<Transaction> list) {
-		System.out.println(list);
 		list.forEach(transaction -> repo.save(transaction));
 
 	}
