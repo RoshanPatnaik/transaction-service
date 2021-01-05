@@ -19,10 +19,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
 public class Transaction {
 	
 	@Id
@@ -43,6 +39,57 @@ public class Transaction {
 		this.transactionType = transactionType;
 		this.beneficiaryAccountNumber = beneficiaryAccountNumber;
 		this.accountNumber = accountNumber;
+	}
+	public Transaction() {
+		super();
+	}
+	public long getTransactionId() {
+		return transactionId;
+	}
+	public void setTransactionId(long transactionId) {
+		this.transactionId = transactionId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public double getTransactionAmount() {
+		return transactionAmount;
+	}
+	public void setTransactionAmount(double transactionAmount) {
+		this.transactionAmount = transactionAmount;
+	}
+	public LocalDate getTransactionDate() {
+		return transactionDate;
+	}
+	public void setTransactionDate(LocalDate transactionDate) {
+		this.transactionDate = transactionDate;
+	}
+	public String getTransactionType() {
+		return transactionType;
+	}
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
+	}
+	public long getBeneficiaryAccountNumber() {
+		return beneficiaryAccountNumber;
+	}
+	public void setBeneficiaryAccountNumber(long beneficiaryAccountNumber) {
+		this.beneficiaryAccountNumber = beneficiaryAccountNumber;
+	}
+	public long getAccountNumber() {
+		return accountNumber;
+	}
+	public void setAccountNumber(long accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+	@Override
+	public String toString() {
+		return "Transaction [transactionId=" + transactionId + ", userId=" + userId + ", transactionAmount="
+				+ transactionAmount + ", transactionDate=" + transactionDate + ", transactionType=" + transactionType
+				+ ", beneficiaryAccountNumber=" + beneficiaryAccountNumber + ", accountNumber=" + accountNumber + "]";
 	}
 	
 	

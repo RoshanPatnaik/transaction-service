@@ -9,14 +9,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@AllArgsConstructor
-@Getter
-@Setter
-@ToString
+
 public class AccountList {
 	private List<Account> accounts;
 	
 	public AccountList() {
 		accounts = new ArrayList<>();
 	}
+
+	public AccountList(List<Account> accounts) {
+		super();
+		this.accounts = accounts;
+	}
+
+	public List<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<Account> accounts) {
+		this.accounts = accounts;
+	}
+
+	@Override
+	public String toString() {
+		return "AccountList [accounts=" + accounts + "]";
+	}
+	
 }
