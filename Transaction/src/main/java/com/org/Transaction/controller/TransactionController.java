@@ -18,21 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.org.Transaction.exception.AccountNotExistsException;
+import com.org.Transaction.exception.BeneficiaryNotExistsException;
+import com.org.Transaction.exception.CreditLimitExceededException;
 import com.org.Transaction.model.CreditCard;
 import com.org.Transaction.model.Transaction;
 import com.org.Transaction.service.TransactionService;
 
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("{userId}/transaction")
 public class TransactionController {
 
 	@Autowired
 	private TransactionService service;
 
 	@GetMapping(value = "add/{userId}/{accountNo}/{beneficiaryAccountNumber}/{amount}/{transactionType}")
-	public void addTransaction(@PathVariable("userId") String userId, @PathVariable("accountNo") long accountNo,@PathVariable("beneficiaryAccountNumber") long beneficiaryAccountNumber, @PathVariable("amount") double amount,@PathVariable("transactionType") String transactionType) {
-		System.out.println("Inside controller");	
-		service.addTransaction(userId,accountNo,beneficiaryAccountNumber,amount,transactionType);
+	public String addTransaction(@PathVariable("userId") String userId, @PathVariable("accountNo") long accountNo,@PathVariable("beneficiaryAccountNumber") long beneficiaryAccountNumber, @PathVariable("amount") double amount,@PathVariable("transactionType") String transactionType) {	
+		try {
+			service.addTransaction(userId,accountNo,beneficiaryAccountNumber,amount,transactionType);
+			return "Transaction Successful";
+		} catch (CreditLimitExceededException | BeneficiaryNotExistsException | AccountNotExistsException e) {
+			return e.getMessage();
+		}
 		
 	}
 

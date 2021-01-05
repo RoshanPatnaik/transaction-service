@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.org.Transaction.dao.TransactionDaoImpl;
+import com.org.Transaction.exception.AccountNotExistsException;
+import com.org.Transaction.exception.BeneficiaryNotExistsException;
+import com.org.Transaction.exception.CreditLimitExceededException;
 import com.org.Transaction.model.Account;
 import com.org.Transaction.model.AccountList;
 import com.org.Transaction.model.Beneficiary;
@@ -54,7 +57,7 @@ public class TransactionService {
 	}
 
 	public void addTransaction(String userId, long accountNo, long beneficiaryAccountNumber, double amount,
-			String transactionType) {
+			String transactionType) throws CreditLimitExceededException, BeneficiaryNotExistsException, AccountNotExistsException {
 		// get all accounts for the user Id from Accounts
 		// Account
 		// account=rest.getForObject("http://ACCOUNTS-SERVICE/.....",Account.class);
@@ -78,8 +81,7 @@ public class TransactionService {
 						}
 						else {
 							//credit limit exceeded
-							System.out.println("Credit Limit Exceeded");
-							break;
+							throw new CreditLimitExceededException("Credit Limit Exceeded");
 						}
 					}
 						
@@ -90,15 +92,14 @@ public class TransactionService {
 					}
 				}
 				else {
-					System.out.println("Beneficiary Does not exist");
-					break;
+					throw new BeneficiaryNotExistsException("Beneficiary does not exist");
 				}
 
 			}
 
 		}
 		if(flag==0) {
-			System.out.println("Account number Does Not exist");
+			throw new AccountNotExistsException("Account number Does Not exist");
 		}
 		else {
 			System.out.println(transaction);
