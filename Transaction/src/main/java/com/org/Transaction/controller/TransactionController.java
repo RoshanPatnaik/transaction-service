@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,26 +22,28 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.org.Transaction.exception.AccountNotExistsException;
 import com.org.Transaction.exception.BeneficiaryNotExistsException;
 import com.org.Transaction.exception.CreditLimitExceededException;
+import com.org.Transaction.exception.InsufficientBalanceException;
 import com.org.Transaction.model.CreditCard;
 import com.org.Transaction.model.Transaction;
 import com.org.Transaction.service.TransactionService;
 
 @RestController
-@RequestMapping("{userId}/transaction")
+@RequestMapping("/transaction")
 public class TransactionController {
 
 	@Autowired
 	private TransactionService service;
 
-	@GetMapping(value = "add/{userId}/{accountNo}/{beneficiaryAccountNumber}/{amount}/{transactionType}")
-	public String addTransaction(@PathVariable("userId") String userId, @PathVariable("accountNo") long accountNo,@PathVariable("beneficiaryAccountNumber") long beneficiaryAccountNumber, @PathVariable("amount") double amount,@PathVariable("transactionType") String transactionType) {	
+	@GetMapping(value = "add/{userId}/{accountNo}/{beneficiaryAccountNumber}/{amount}/{transactionType}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> addTransaction(@PathVariable("userId") String userId, @PathVariable("accountNo") long accountNo,@PathVariable("beneficiaryAccountNumber") long beneficiaryAccountNumber, @PathVariable("amount") double amount,@PathVariable("transactionType") String transactionType) {	
+		ResponseEntity<Object> response = null;
 		try {
 			service.addTransaction(userId,accountNo,beneficiaryAccountNumber,amount,transactionType);
-			return "Transaction Successful";
-		} catch (CreditLimitExceededException | BeneficiaryNotExistsException | AccountNotExistsException e) {
-			return e.getMessage();
+			response = ResponseEntity.status(200).body("Transaction Successful");
+		} catch (CreditLimitExceededException | BeneficiaryNotExistsException | AccountNotExistsException | InsufficientBalanceException e) {
+			response = ResponseEntity.status(404).body(e.getMessage());
 		}
-		
+		return response;
 	}
 
 	@RequestMapping(value = "/filters", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)

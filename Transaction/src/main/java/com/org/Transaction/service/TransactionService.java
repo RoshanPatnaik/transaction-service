@@ -17,6 +17,7 @@ import com.org.Transaction.dao.TransactionDaoImpl;
 import com.org.Transaction.exception.AccountNotExistsException;
 import com.org.Transaction.exception.BeneficiaryNotExistsException;
 import com.org.Transaction.exception.CreditLimitExceededException;
+import com.org.Transaction.exception.InsufficientBalanceException;
 import com.org.Transaction.model.Account;
 import com.org.Transaction.model.AccountList;
 import com.org.Transaction.model.Beneficiary;
@@ -57,7 +58,7 @@ public class TransactionService {
 	}
 
 	public void addTransaction(String userId, long accountNo, long beneficiaryAccountNumber, double amount,
-			String transactionType) throws CreditLimitExceededException, BeneficiaryNotExistsException, AccountNotExistsException {
+			String transactionType) throws CreditLimitExceededException, BeneficiaryNotExistsException, AccountNotExistsException, InsufficientBalanceException {
 		// get all accounts for the user Id from Accounts
 		// Account
 		// account=rest.getForObject("http://ACCOUNTS-SERVICE/.....",Account.class);
@@ -90,6 +91,9 @@ public class TransactionService {
 						transaction = new Transaction(userId, amount, LocalDate.now(), transactionType,beneficiaryAccountNumber, accountNo);
 						dao.saveTransaction(transaction);
 					}
+					else {
+						throw new InsufficientBalanceException("Insufficient Balance");
+					}
 				}
 				else {
 					throw new BeneficiaryNotExistsException("Beneficiary does not exist");
@@ -107,7 +111,7 @@ public class TransactionService {
 	}
 
 	public boolean beneficiaryExists(long beneficiaryAccountNumber) {
-		if (dao.getBeneficiary(beneficiaryAccountNumber) != null) {
+		if (dao.getBeneficiary(beneficiaryAccountNumber) != 0) {
 			return true;
 		}
 		return false;

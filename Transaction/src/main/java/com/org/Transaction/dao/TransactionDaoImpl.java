@@ -3,6 +3,7 @@ package com.org.Transaction.dao;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,8 +35,9 @@ public class TransactionDaoImpl {
 		repo.save(transaction);
 	}
 	
-	public Beneficiary getBeneficiary(Long beneficiaryAccNo) {
-		return beneficiaryRepo.findById(beneficiaryAccNo).get();
+	public int getBeneficiary(Long beneficiaryAccNo) {
+		return beneficiaryRepo.findAll().stream().filter(beneficiary -> beneficiary.getBeneficiaryAccountNumber()==beneficiaryAccNo).collect(Collectors.toList()).size();
+		//return beneficiaryRepo.findById(beneficiaryAccNo).get();
 	}
 
 	

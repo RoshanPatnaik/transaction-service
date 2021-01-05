@@ -5,7 +5,7 @@ public class BeneficiaryNotExistsException extends Exception {
 	private String message;
 	
 	public BeneficiaryNotExistsException(String message) {
-		this.message = message;
+		super(message);
 	}
 	
 }

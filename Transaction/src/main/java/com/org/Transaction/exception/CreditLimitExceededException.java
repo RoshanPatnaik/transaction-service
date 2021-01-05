@@ -5,7 +5,7 @@ public class CreditLimitExceededException extends Exception {
 	private String message;
 	
 	public CreditLimitExceededException(String message) {
-		this.message = message;
+		super(message);
 	}
 	
 }
